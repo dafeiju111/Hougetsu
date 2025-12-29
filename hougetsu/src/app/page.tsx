@@ -6,6 +6,7 @@ import {Button} from "@/components/ui/button";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import InputView from"@/components/InputView";
 
 export default function Homepage(){
     //save articles to local storage for test
@@ -53,18 +54,10 @@ return (
             </div>
 
             <Card className="flex-1 overflow-hidden shadow-md">
-                <ScrollArea className="h-full">
-                    <div
-                        className="text-lg leading-loose text-slate-900 font-serif cursor-text p-8" onMouseUp={handleMouseUp}
-                    >
-                        <textarea
-                            placeholder = "Paste your text here..."
-                            className="w-full h-full min-h-[600px] p-4 border-none outline-none resize-none font-serif text-2xl leading-relaxed bg-transparent maxLength={5000}"
-                            value={tempInput}
-                            onChange ={(e) => setTempInput(e.target.value)}
-                        />
-                    </div>
-                </ScrollArea>
+                <InputView
+                    onProcess={(text) => console.log("text to process:",text)}
+                    onSelect={handleMouseUp}
+                />
             </Card>
         </div>
 
