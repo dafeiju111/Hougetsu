@@ -7,9 +7,11 @@ import {ScrollArea} from "@/components/ui/scroll-area";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import InputView from"@/components/InputView";
+import ReadingView from"@/components/ReadingView";
+import {fetchTranslation} from "@/lib/translate";
 
 // define paragraph export function
-interface paragraph{
+export interface paragraph{
     id: string;
     original: string;
     translation: string;
@@ -53,7 +55,7 @@ const handleProcess = (text:string) => {
     .map(line => line.trim())
     .filter(line => line.length > 0);
 
-    //console.log("--- test ---", segments);
+    console.log("--- test ---", segments);
 
     // change string into paragraph
     const newParagraphs:paragraph[] = segments.map((line,index) => ({
@@ -69,13 +71,33 @@ const handleProcess = (text:string) => {
 }
 
 // change original text / translation text
-const toggleTranslation = (id:string) => {
-    setParagraphs((prev) =>
-        prev.map((p) =>
-        p.id === id ? {
-            ...p, isShowingTranslation: !p.isShowingTranslation} : p
-        )
-    );
+const toggleTranslation = async (id:string) => {
+    // select recent paragraph
+    const target = paragraphs.find(p => p.id === id);
+    if (!target) return;
+    // if has translation
+    if (target.translation) {
+        setParagraphs(prev => prev.map(p => 
+            p.id === id ? { ...p, isShowingTranslation: !p.isShowingTranslation } : p
+        ));
+        return;
+    }
+
+    // if no translation, loading first, then fetch translation
+    setParagraphs(prev => prev.map(p => 
+        p.id === id ? { ...p, isShowingTranslation: true, status: 'loading' } : p
+    ));
+    try {
+        
+        const result = await fetchTranslation(target.original);
+        setParagraphs(prev => prev.map(p => 
+            p.id === id ? { ...p, translation: result, status: 'success' } : p
+        ));
+    } catch (error) {
+        setParagraphs(prev => prev.map(p => 
+            p.id === id ? { ...p, status: 'error' } : p
+        ));
+    }
 };
 
 
@@ -92,10 +114,19 @@ return (
             </div>
 
             <Card className="flex-1 overflow-hidden shadow-md">
-                <InputView
-                    onProcess={handleProcess}
-                    onSelect={handleMouseUp}
-                />
+                {!isReading ? (
+                    <InputView
+                        onProcess={handleProcess}
+                        onSelect={handleMouseUp}
+                    />
+                ) : (
+                    <ReadingView
+                        paragraphs={paragraphs}
+                        onToggle={toggleTranslation}
+                        onBack={() => setIsReading(false)}
+                        onSelect={handleMouseUp}
+                    />
+                )}
             </Card>
         </div>
 
