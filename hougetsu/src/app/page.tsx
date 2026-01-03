@@ -87,6 +87,7 @@ const toggleTranslation = async (id:string) => {
     // select recent paragraph
     const target = paragraphs.find(p => p.id === id);
     if (!target) return;
+
     // if has translation
     if (target.translation) {
         setParagraphs(prev => prev.map(p => 
@@ -100,7 +101,12 @@ const toggleTranslation = async (id:string) => {
         p.id === id ? { ...p, isShowingTranslation: true, status: 'loading' } : p
     ));
     try {
-        const result = await fetchTranslation(target.original);
+        const result = await fetchTranslation(
+            target.original,
+            storyContext,
+            sourceLang,
+            targetLang
+        );
         setParagraphs(prev => prev.map(p => 
             p.id === id ? { 
                 ...p, 
