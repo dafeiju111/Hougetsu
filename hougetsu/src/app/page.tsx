@@ -88,10 +88,13 @@ const toggleTranslation = async (id:string) => {
         p.id === id ? { ...p, isShowingTranslation: true, status: 'loading' } : p
     ));
     try {
-        
         const result = await fetchTranslation(target.original);
         setParagraphs(prev => prev.map(p => 
-            p.id === id ? { ...p, translation: result, status: 'success' } : p
+            p.id === id ? { 
+                ...p, 
+                translation: result, 
+                status: 'success' 
+            } : p
         ));
     } catch (error) {
         setParagraphs(prev => prev.map(p => 
