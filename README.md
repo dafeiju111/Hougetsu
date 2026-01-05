@@ -10,7 +10,7 @@ Make sure you have these installed:
 ### Step 2: Clone the Code and Install Dependencies
 clone the repository:
 ```bash
-git clone https://github.com/dafeiju111/hougetsu.git
+git clone https://github.com/dafeiju111/Hougetsu.git
 ```
 
 Navigate to the hougetsu folder (ensure the package.json file is present in this directory):
